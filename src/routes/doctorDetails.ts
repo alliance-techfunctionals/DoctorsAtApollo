@@ -22,10 +22,15 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
 });
 
 router.post("/", async (req: express.Request, res: express.Response) => {
-  const result = await prisma.doctorDetails.create({
-    data: { ...req.body },
-  });
-  logger(false, `Creating Doctor details : `, result);
+  let result;
+  try {
+    result = await prisma.doctorDetails.create({
+      data: { ...req.body },
+    });
+    logger(false, `Creating Doctor details : `, result);
+  } catch (err)  {
+    logger(false, `Creating Doctor failed due to. : `, err);
+  }
   res.send({ status: true, data: result });
 });
 

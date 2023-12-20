@@ -9,7 +9,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
     where: { IsActive: true },
   });
   logger(false, `Get All Active Departments.`, departments);
-  res.send({ status: true, data: departments });
+  res.send({ status: true, message: "Get All Active Departments.", data: departments });
 });
 
 router.get("/:id", async (req: express.Request, res: express.Response) => {
@@ -18,35 +18,49 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
     where: { Id: department_id, IsActive: true },
   });
   logger(false, `Get Active Department by Id ${department_id} .`, department);
-  res.send({ status: true, data: department });
+  res.send({ status: true, message: `Get Active Department by Id ${department_id} .` , data: department });
 });
 
 router.post("/", async (req: express.Request, res: express.Response) => {
-  const result = await prisma.departments.create({
-    data: { ...req.body },
-  });
-  logger(false, `Creating Department `, result);
-  res.send({ status: true, data: result });
+  try {
+    const result = await prisma.departments.create({
+      data: { ...req.body },
+    });
+    logger(false, `Creating Department `, result);
+    res.send({ status: true, message: "Creating Department." ,  data: result });
+  } catch(err) {
+    res.send({ status: false, message: "Creating Department failed due to." ,  data: err });
+  }
 });
 
 router.put("/:id", async (req: express.Request, res: express.Response) => {
   const department_id = parseInt(req.params.id);
-  const updated_department = await prisma.departments.update({
-    where: { Id: department_id },
-    data: { ...req.body },
-  });
-  logger(false, `Updating Department `, updated_department);
-  res.send({ status: true, data: updated_department });
+  try {
+    const updated_department = await prisma.departments.update({
+      where: { Id: department_id },
+      data: { ...req.body },
+    });
+    logger(false, `Updating Department `, updated_department);
+    res.send({ status: true, data: updated_department });
+  } catch (err) {
+    logger(true, `Updating Department failed due to.`, err);
+    res.send({ status: false, message: "Updating Department failed due to.", data: err });
+  }
 });
 
 router.delete("/:id", async (req: express.Request, res: express.Response) => {
   const department_id = parseInt(req.params.id);
-  const deleted_department = await prisma.departments.update({
-    where: { Id: department_id },
-    data: { IsActive: false },
-  });
-  logger(false, `Deleting Department `, deleted_department);
-  res.send({ status: true, data: deleted_department });
+  try {
+    const deleted_department = await prisma.departments.update({
+      where: { Id: department_id },
+      data: { IsActive: false },
+    });
+    logger(false, `Deleting Department `, deleted_department);
+    res.send({ status: true, data: deleted_department });
+  } catch (err)  {
+    logger(true, `Deleting Department failed due to.`, err);
+    res.send({ status: false, message: `Deleting Department failed due to.` , data: err });
+  }
 });
 
 export default router;

@@ -13,7 +13,6 @@ model Departments {
   Id             Int              @id(map: "PK__departme__C2232422F68430C7") @default(autoincrement())
   Name           String           @db.VarChar(200)
   IsActive       Boolean          @default(true, map: "DF__departmen__is_ac__5535A963")
-  DoctorDetails  DoctorDetails[]
   ProcedureTypes ProcedureTypes[]
 
   @@schema("Lookups")
@@ -36,7 +35,7 @@ model DoctorActivities {
 model DoctorDetails {
   Id               Int                @id(map: "PK__doctors__F3993564FF6584E2") @default(autoincrement())
   DoctorName       String             @db.VarChar(200)
-  MobileNumber     Int                @unique(map: "IX_DoctorDetails_1")
+  MobileNumber     String             @unique(map: "IX_DoctorDetails_1") @db.VarChar(50)
   DepartmentId     Int
   IsOTPVerified    Boolean?           @default(false, map: "DF__doctors__is_otp___5AEE82B9")
   IsActive         Boolean            @default(true, map: "DF__doctors__is_acti__5BE2A6F2")
@@ -44,7 +43,6 @@ model DoctorDetails {
   LastModifiedOn   DateTime?          @db.DateTime
   Otp              Int?
   DoctorActivities DoctorActivities[]
-  Departments      Departments        @relation(fields: [DepartmentId], references: [Id], onUpdate: NoAction, map: "FK__doctors__updated__5DCAEF64")
 
   @@schema("Lookups")
 }
