@@ -5,20 +5,30 @@ const prisma: any = new PrismaClient();
 import { logger } from "../utils/utils";
 
 router.get("/", async (req: express.Request, res: express.Response) => {
-  const departments = await prisma.departments.findMany({
-    where: { IsActive: true },
-  });
-  logger(false, `Get All Active Departments.`, departments);
-  res.send({ status: true, message: "Get All Active Departments.", data: departments });
+  try {
+    const departments = await prisma.departments.findMany({
+      where: { IsActive: true },
+    });
+    logger(false, `Get All Active Departments.`, departments);
+    res.send({ status: true, message: "Get All Active Departments.", data: departments });
+  } catch (err) {
+    logger(true, `Get All Active Departments operation failed due to.`, err);
+    res.send({ status: false, message: "Get All Active Departments operation failed due to.", data: err })
+  }
 });
 
 router.get("/:id", async (req: express.Request, res: express.Response) => {
-  const department_id = parseInt(req.params.id);
-  const department = await prisma.departments.findFirst({
-    where: { Id: department_id, IsActive: true },
-  });
-  logger(false, `Get Active Department by Id ${department_id} .`, department);
-  res.send({ status: true, message: `Get Active Department by Id ${department_id} .` , data: department });
+  try {
+    const department_id = parseInt(req.params.id);
+    const department = await prisma.departments.findFirst({
+      where: { Id: department_id, IsActive: true },
+    });
+    logger(false, `Get Active Department by Id ${department_id} .`, department);
+    res.send({ status: true, message: `Get Active Department by Id ${department_id} .` , data: department });
+  } catch (err) {
+    logger(true, `Get Active Department operation failed due to.`, err);
+    res.send({ status: false, message: "Get Active Department operation failed due to.", data: err })
+  }
 });
 
 router.post("/", async (req: express.Request, res: express.Response) => {
