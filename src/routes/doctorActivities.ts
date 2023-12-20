@@ -10,7 +10,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
       where: { IsDeleted: false },
     });
     logger(false, `Getting Doctor Activities : `, doctorActivities);
-    res.send({ status: true, data: doctorActivities });
+    res.send({ status: true, message: `Getting Doctor Activities : ` , data: doctorActivities });
   } catch (err) {
     logger(true, `Getting Doctor Activities operation failed due to.`, err);
     res.send({ status: false, message: `Getting Doctor Activities operation failed due to.`, data: err });
