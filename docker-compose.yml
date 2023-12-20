@@ -1,0 +1,12 @@
+version: "1.0"
+services:
+   apollo:
+     image: apollo:0.0.1
+     container_name: apollo-micro-service
+     environment:
+      - TZ=Asia/Kolkata
+     env_file:
+      - env/.env
+     ports:
+     - 3000:3000
+     restart: on-failure
