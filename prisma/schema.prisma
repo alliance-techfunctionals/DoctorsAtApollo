@@ -36,12 +36,13 @@ model DoctorActivities {
 model DoctorDetails {
   Id               Int                @id(map: "PK__doctors__F3993564FF6584E2") @default(autoincrement())
   DoctorName       String             @db.VarChar(200)
-  MobileNumber     Int
+  MobileNumber     Int                @unique(map: "IX_DoctorDetails_1")
   DepartmentId     Int
   IsOTPVerified    Boolean?           @default(false, map: "DF__doctors__is_otp___5AEE82B9")
   IsActive         Boolean            @default(true, map: "DF__doctors__is_acti__5BE2A6F2")
   CreatedOn        DateTime           @default(now(), map: "DF__doctors__created__5CD6CB2B") @db.DateTime
   LastModifiedOn   DateTime?          @db.DateTime
+  Otp              Int?
   DoctorActivities DoctorActivities[]
   Departments      Departments        @relation(fields: [DepartmentId], references: [Id], onUpdate: NoAction, map: "FK__doctors__updated__5DCAEF64")
 
