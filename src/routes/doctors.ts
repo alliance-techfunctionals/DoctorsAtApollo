@@ -3,6 +3,8 @@ const router = express.Router();
 import { logger } from "../utils/utils";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import dotenv from "dotenv";
+dotenv.config();
 
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
@@ -29,20 +31,6 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
     logger(true, `Getting Doctor Detail by Id ${doctor_id} failed due to.`, err);
     res.send({ status: false, message: `Getting Doctor Detail by Id ${doctor_id} failed due to.` ,  data: err });
   }
-});
-
-router.post("/", async (req: express.Request, res: express.Response) => {
-  let result;
-  try {
-    result = await prisma.doctorDetails.create({
-      data: { ...req.body },
-    });
-    logger(false, `Creating Doctor details : `, result);
-  } catch (err)  {
-    logger(true, `Creating Doctor detail failed due to.`, err);
-    res.send({ status: false, message: `Creating Doctor detail failed due to.` ,  data: err });
-  }
-  res.send({ status: true, data: result });
 });
 
 router.put("/:id", async (req: express.Request, res: express.Response) => {
