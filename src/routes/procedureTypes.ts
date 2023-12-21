@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
-    const procedureTypes = await prisma.procedureTypes.findMany({
-      where: { IsActive: 1 },
+    const procedureTypes = await prisma.procedures.findMany({
+      where: { IsActive: true },
     });
     logger(false, `Getting procedure types : `, procedureTypes);
     res.send({ status: true, message: `Getting procedure types.` , data: procedureTypes });
@@ -20,8 +20,8 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 router.get("/:id", async (req: express.Request, res: express.Response) => {
   const procedureType_id = parseInt(req.params.id);
   try {
-    const procedureTypeDetail = await prisma.procedureTypes.findFirst({
-      where: { Id: procedureType_id, IsActive: 1 },
+    const procedureTypeDetail = await prisma.procedures.findFirst({
+      where: { Id: procedureType_id, IsActive: true },
     });
     logger(false, `Getting procedure type by Id ${procedureType_id} : `, procedureTypeDetail);
     res.send({ status: true, data: procedureTypeDetail });
@@ -33,7 +33,7 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
 
 router.post("/", async (req: express.Request, res: express.Response) => {
   try {
-    const result = await prisma.procedureTypes.create({
+    const result = await prisma.procedures.create({
       data: { ...req.body },
     });
     logger(false, `Creating procedure type `, result);
@@ -47,7 +47,7 @@ router.post("/", async (req: express.Request, res: express.Response) => {
 router.put("/:id", async (req: express.Request, res: express.Response) => {
   const procedureType_id = parseInt(req.params.id);
   try {
-    const updated_procedureType_id = await prisma.procedureTypes.update({
+    const updated_procedureType_id = await prisma.procedures.update({
       where: { Id: procedureType_id },
       data: { ...req.body },
     });
@@ -62,9 +62,9 @@ router.put("/:id", async (req: express.Request, res: express.Response) => {
 router.delete("/:id", async (req: express.Request, res: express.Response) => {
   const procedureType_id = parseInt(req.params.id);
   try {
-    const deleted_procedureType_id = await prisma.procedureTypes.update({
+    const deleted_procedureType_id = await prisma.procedures.update({
       where: { Id: procedureType_id },
-      data: { IsActive: 0 },
+      data: { IsActive: false },
     });
     logger(false, `Deleting procedure type by id ${procedureType_id}`, deleted_procedureType_id);
     res.send({ status: true, data: deleted_procedureType_id });

@@ -27,7 +27,7 @@ router.post("/register", async (req: express.Request, res: express.Response) => 
     const tokenSecret : any = process.env.TOKEN_SECRET;
     let result;
     try {
-      result = await prisma.doctorDetails.create({
+      result = await prisma.doctors.create({
         data: { ...req.body },
       });
       // Creating JSON Web Token

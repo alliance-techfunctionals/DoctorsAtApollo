@@ -6,8 +6,12 @@ const prisma = new PrismaClient();
 
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
-    const patientDetails = await prisma.patientDetails.findMany({
+    const patientDetails = await prisma.patients.findMany({
       where: { IsActive: true },
+    });
+    const patientIds = patientDetails.map(item => item.Id);
+    const doctorActivities = await prisma.doctorActvities.findMany({
+      where: { IsDeleted: false },
     });
     logger(false, `Getting Patient Details : `, patientDetails);
     res.send({ status: true, data: patientDetails });
@@ -20,7 +24,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 router.get("/:id", async (req: express.Request, res: express.Response) => {
   const patient_id = parseInt(req.params.id);
   try {
-    const patientDetail = await prisma.patientDetails.findFirst({
+    const patientDetail = await prisma.patients.findFirst({
       where: { Id: patient_id, IsActive: true },
     });
     logger(false, `Getting Patient Detail by Id : ${patient_id} `, patientDetail);
@@ -33,7 +37,7 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
 
 router.post("/", async (req: express.Request, res: express.Response) => {
   try {
-    const result = await prisma.patientDetails.create({
+    const result = await prisma.patients.create({
       data: { ...req.body },
     });
     logger(false, `Creating Patient Details : `, result);
@@ -47,7 +51,7 @@ router.post("/", async (req: express.Request, res: express.Response) => {
 router.put("/:id", async (req: express.Request, res: express.Response) => {
   const patient_id = parseInt(req.params.id);
   try {
-    const updated_patient_details = await prisma.patientDetails.update({
+    const updated_patient_details = await prisma.patients.update({
       where: { Id: patient_id },
       data: { ...req.body, ModifiedOn: new Date },
     });
@@ -62,7 +66,7 @@ router.put("/:id", async (req: express.Request, res: express.Response) => {
 router.delete("/:id", async (req: express.Request, res: express.Response) => {
   const patient_id = parseInt(req.params.id);
   try {
-    const deleted_patient = await prisma.patientDetails.update({
+    const deleted_patient = await prisma.patients.update({
       where: { Id: patient_id },
       data: { IsActive: false },
     });

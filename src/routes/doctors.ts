@@ -8,7 +8,7 @@ dotenv.config();
 
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
-    const docktorDetails = await prisma.doctorDetails.findMany({
+    const docktorDetails = await prisma.doctors.findMany({
       where: { IsActive: true },
     });
     logger(false, `Getting Doctor Details : `, docktorDetails);
@@ -22,7 +22,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 router.get("/:id", async (req: express.Request, res: express.Response) => {
   const doctor_id = parseInt(req.params.id);
   try {
-    const docktorDetail = await prisma.doctorDetails.findFirst({
+    const docktorDetail = await prisma.doctors.findFirst({
       where: { Id: doctor_id, IsActive: true },
     });
     logger(false, `Getting Doctor detail by Id ${doctor_id} : `, docktorDetail);
@@ -36,7 +36,7 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
 router.put("/:id", async (req: express.Request, res: express.Response) => {
   const doctor_id = parseInt(req.params.id);
   try {
-    const updated_doctor_details = await prisma.doctorDetails.update({
+    const updated_doctor_details = await prisma.doctors.update({
       where: { Id: doctor_id },
       data: { ...req.body , LastModifiedOn: new Date },
     });
@@ -51,7 +51,7 @@ router.put("/:id", async (req: express.Request, res: express.Response) => {
 router.delete("/:id", async (req: express.Request, res: express.Response) => {
   const doctor_id = parseInt(req.params.id);
   try {
-    const deleted_doctor = await prisma.doctorDetails.update({
+    const deleted_doctor = await prisma.doctors.update({
       where: { Id: doctor_id },
       data: { IsActive: false },
     });

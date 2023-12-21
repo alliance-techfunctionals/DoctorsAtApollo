@@ -6,7 +6,7 @@ import { logger } from "../utils/utils";
 
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
-    const doctorActivities = await prisma.doctorActivities.findMany({
+    const doctorActivities = await prisma.doctorActvities.findMany({
       where: { IsDeleted: false },
     });
     logger(false, `Getting Doctor Activities : `, doctorActivities);
@@ -20,7 +20,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 router.get("/:id", async (req: express.Request, res: express.Response) => {
   const doctor_id = parseInt(req.params.id);
   try {
-    const doctorActivity = await prisma.doctorActivities.findFirst({
+    const doctorActivity = await prisma.doctorActvities.findFirst({
       where: { Id: doctor_id, IsDeleted: false },
     });
     logger(false, `Getting Doctor Activity by Id ${doctor_id} : `, doctorActivity);
@@ -33,7 +33,7 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
 
 router.post("/", async (req: express.Request, res: express.Response) => {
   try {
-    const result = await prisma.doctorActivities.create({
+    const result = await prisma.doctorActvities.create({
       data: { ...req.body },
     });
     logger(false, `Creaing Doctor Activity : `, result);
@@ -47,7 +47,7 @@ router.post("/", async (req: express.Request, res: express.Response) => {
 router.put("/:id", async (req: express.Request, res: express.Response) => {
   const doctor_id = parseInt(req.params.id);
   try {
-    const updated_doctor_activities = await prisma.doctorActivities.update({
+    const updated_doctor_activities = await prisma.doctorActvities.update({
       where: { Id: doctor_id },
       data: { ...req.body },
     });
@@ -62,7 +62,7 @@ router.put("/:id", async (req: express.Request, res: express.Response) => {
 router.delete("/:id", async (req: express.Request, res: express.Response) => {
   const doctor_id = parseInt(req.params.id);
   try {
-    const delete_docktor_activities = await prisma.doctorActivities.update({
+    const delete_docktor_activities = await prisma.doctorActvities.update({
       where: { Id: doctor_id },
       data: { IsDeleted: true },
     });

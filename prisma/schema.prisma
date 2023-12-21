@@ -9,64 +9,63 @@ datasource db {
   schemas  = ["Lookups", "Transactions"]
 }
 
-model Departments {
-  Id             Int              @id(map: "PK__departme__C2232422F68430C7") @default(autoincrement())
-  Name           String           @db.VarChar(200)
-  IsActive       Boolean          @default(true, map: "DF__departmen__is_ac__5535A963")
-  ProcedureTypes ProcedureTypes[]
+model departments {
+  Id       Int       @id(map: "PK__departme__3214EC0777D1BB01") @default(autoincrement())
+  Name     String    @db.VarChar(200)
+  IsActive Boolean   @default(true, map: "DF__departmen__IsAct__3E52440B")
+  doctors  doctors[]
 
   @@schema("Lookups")
 }
 
-model DoctorActivities {
-  Id             Int            @id(map: "PK__doctor_a__482FBD63B24F956B") @default(autoincrement())
+model DoctorActvities {
+  Id             Int       @id(map: "PK__doctor_a__3214EC070DAAA524") @default(autoincrement())
   DoctorId       Int
   PatientId      Int
-  TypeId         Int
-  CreatedOn      DateTime       @default(now(), map: "DF__doctor_ac__creat__6754599E") @db.DateTime
-  ModifiedOn     DateTime?      @db.DateTime
-  IsDeleted      Boolean        @default(false, map: "DF__doctor_ac__is_de__68487DD7")
-  DoctorDetails  DoctorDetails  @relation(fields: [DoctorId], references: [Id], onUpdate: NoAction, map: "FK__doctor_ac__act_d__693CA210")
-  PatientDetails PatientDetails @relation(fields: [PatientId], references: [Id], onUpdate: NoAction, map: "FK__doctor_ac__act_p__6A30C649")
+  ActivityTypeId Int
+  CreatedOn      DateTime  @default(now(), map: "DF__doctor_ac__Creat__5812160E") @db.DateTime
+  ModifiedOn     DateTime? @db.DateTime
+  IsDeleted      Boolean   @default(false, map: "DF__doctor_ac__IsDel__59063A47")
 
   @@schema("Transactions")
 }
 
-model DoctorDetails {
-  Id               Int                @id(map: "PK__doctors__F3993564FF6584E2") @default(autoincrement())
-  DoctorName       String             @db.VarChar(200)
-  MobileNumber     String             @unique(map: "IX_DoctorDetails_1") @db.VarChar(50)
-  DepartmentId     Int
-  IsOTPVerified    Boolean?           @default(false, map: "DF__doctors__is_otp___5AEE82B9")
-  IsActive         Boolean            @default(true, map: "DF__doctors__is_acti__5BE2A6F2")
-  CreatedOn        DateTime           @default(now(), map: "DF__doctors__created__5CD6CB2B") @db.DateTime
-  LastModifiedOn   DateTime?          @db.DateTime
-  Otp              Int?
-  DoctorActivities DoctorActivities[]
+model doctors {
+  Id             Int         @id(map: "PK__doctors__3214EC07DBF8B6CD") @default(autoincrement())
+  DoctorName     String      @db.VarChar(200)
+  MobileNumber   String      @db.VarChar(50)
+  DepartmentId   Int
+  IsOTPVerified  Boolean?    @default(false, map: "DF__doctors__IsOTPVe__4BAC3F29")
+  IsActive       Boolean     @default(true, map: "DF__doctors__IsActiv__4CA06362")
+  CreatedOn      DateTime    @default(now(), map: "DF__doctors__Created__4D94879B") @db.DateTime
+  LastModifiedOn DateTime?   @db.DateTime
+  Otp            Int?
+  departments    departments @relation(fields: [DepartmentId], references: [Id], onUpdate: NoAction, map: "FK__doctors__Updated__4E88ABD4")
+  patients       patients[]
 
   @@schema("Lookups")
 }
 
-model PatientDetails {
-  Id               Int                @id(map: "PK__patients__4D5CE476F0BD1EE8") @default(autoincrement())
-  PatientName      String             @db.VarChar(200)
-  BedId            String?            @db.VarChar(100)
-  UHID             String?            @db.VarChar(100)
-  IPId             String?            @default("1", map: "DF__patients__is_act__60A75C0F") @db.VarChar(100)
-  CreatedOn        DateTime           @default(now(), map: "DF__patients__create__619B8048") @db.DateTime
-  ModifiedOn       DateTime?          @db.DateTime
-  IsActive         Boolean            @default(true, map: "DF_patients_IsActive")
-  DoctorActivities DoctorActivities[]
+  model patients {
+    Id          Int       @id(map: "PK__patients__3214EC07387F55DE") @default(autoincrement())
+    DoctorId    Int?
+    PatientName String    @db.VarChar(200)
+    BedId       String?   @db.VarChar(200)
+    UHID        String?   @db.VarChar(50)
+    IPId        String?   @db.VarChar(50)
+    CreatedOn   DateTime  @default(now(), map: "DF__patients__Create__52593CB8") @db.DateTime
+    ModifiedOn  DateTime? @db.DateTime
+    IsActive    Boolean   @default(true, map: "DF__patients__IsActi__5165187F")
+    doctors     doctors?  @relation(fields: [DoctorId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "DoctorId")
 
-  @@schema("Transactions")
-}
+    @@schema("Lookups")
+  }
 
-model ProcedureTypes {
-  Id            Int         @id(map: "PK__procedur__8C63FCDE4EF81851") @default(autoincrement())
+model procedures {
+  Id            Int     @id(map: "PK__procedur__3214EC07445D551B") @default(autoincrement())
   DepartmentId  Int
-  ProcedureName String      @default("1", map: "DF__procedure__is_ac__5812160E") @db.VarChar(200)
-  IsActive      Int         @default(1, map: "DF_procedures_IsActive")
-  Departments   Departments @relation(fields: [DepartmentId], references: [Id], onUpdate: NoAction, map: "FK_procedures_departments")
+  ProcedureName String  @db.VarChar(200)
+  IsActive      Boolean @default(true, map: "DF__procedure__IsAct__48CFD27E")
 
   @@schema("Lookups")
 }
