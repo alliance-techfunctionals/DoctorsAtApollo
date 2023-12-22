@@ -55,7 +55,7 @@ router.get("/login" , async (req: express.Request, res: express.Response) => {
        logger(false, `Getting Doctor details By Mobile : `, result);
        res.send({ status: true, data: { doctor: result, token: token } });
       } else {
-        res.send({status: false, message: `Doctor not registered. Please register doctor first.`});
+        res.send({status: false, message: `Doctor not registered. Please register first.`});
       }
       
     } catch (err) {
