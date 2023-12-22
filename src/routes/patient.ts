@@ -12,8 +12,14 @@ router.get("/", async (req: express.Request, res: express.Response) => {
       where: { IsActive: true , DoctorId: token.DoctorId },
     });
     for (let i = 0 ; i < patientDetails.length; i++)  {
-      patientDetails[i]["Visits"] = 0;
-      patientDetails[i]["Procedures"] = 0;
+      let visits = await prisma.doctorActvities.findMany({
+        where: { IsDeleted: false , ActivityTypeId: 0, DoctorId: patientDetails[i].DoctorId },
+      });
+      let procedures = await prisma.doctorActvities.findMany({
+        where: { IsDeleted: false , ActivityTypeId: { not: 0 }, DoctorId: patientDetails[i].DoctorId },
+      });
+      patientDetails[i]["Visits"] = visits.length;
+      patientDetails[i]["Procedures"] = procedures.length;
     }
     logger(false, `Getting Patient Details : `, patientDetails);
     res.send({ status: true, data: patientDetails });
