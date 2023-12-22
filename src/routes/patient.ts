@@ -34,7 +34,6 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
   let doctorActivitiesHistory = await prisma.doctorActvities.findMany({
     where: { PatientId: patient_id, IsDeleted: false }
   });
-
   let visits, procedures;
   try {
     const patientDetail : any = await prisma.patients.findFirst({
@@ -44,9 +43,9 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
     visits = doctorActivitiesHistory.filter((doctorActivity) => doctorActivity.ActivityTypeId == 0);
     procedures = doctorActivitiesHistory.filter((doctorActivity) => doctorActivity.ActivityTypeId != 0);
   
-    if (req.body.history == "visits") {
+    if (req.query.visits === "true") {
       patientDetail["visits"] = visits;
-    } else if (req.body.history == "procedures")  {
+    } else if (req.query.procedures === "true")  {
       patientDetail["procedures"] = procedures;
     } else {
       patientDetail["visits"] = visits;
@@ -57,6 +56,22 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
   } catch (err) {
     logger(true, `Getting Patient Detail by Id ${patient_id} operation failed due to.`, err);
     res.send({ status: false, message: `Getting Patient Detail by Id ${patient_id} operation failed due to.` , data: err });
+  }
+});
+
+router.get("/:id/refer" , async (req: express.Request, res: express.Response) => {
+  const patient_id = parseInt(req.params.id);
+  logger(false, `Fetching other doctors to refer patient ${patient_id}`);
+  let otherDoctors;
+  try {
+    let patientDetail : any = await prisma.patients.findFirst({ where: { Id: patient_id }});
+    otherDoctors = await prisma.doctors.findMany({
+      where: { Id: { not: patientDetail?.DoctorId } }
+    });
+    return res.send({ status: true, data: otherDoctors });
+  } catch (err) {
+    logger(false, `Fetching other doctors to refer patient ${patient_id} failed due to.`, err);
+    return res.send({ status: false, message: `Fetching other doctors to refer patient ${patient_id} failed due to.`, data: err });
   }
 });
 
