@@ -3,6 +3,7 @@ import winston from "winston";
 import fs from 'fs';
 const axios = require('axios');
 const qs = require('qs');
+import buffer from "buffer";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -50,4 +51,10 @@ let config = {
   return result;
 }
 
-  export {logger, randomNumber,sendOTP };
+function decodeJWTToken(jwt: any) {
+  let parseToken = JSON.parse(buffer.Buffer.from(jwt.split(".")[1], "base64").toString("utf-8"));
+  return parseToken;
+}
+
+
+  export {logger, randomNumber,sendOTP, decodeJWTToken};

@@ -2,17 +2,19 @@ import express from "express";
 const router = express.Router();
 import { PrismaClient } from "@prisma/client";
 import { logger  } from "../utils/utils";
+import { decodeJWTToken  } from "../utils/utils";
 const prisma = new PrismaClient();
 
 router.get("/", async (req: express.Request, res: express.Response) => {
+  let token = decodeJWTToken(req.headers.authorization);
   try {
-    const patientDetails = await prisma.patients.findMany({
-      where: { IsActive: true },
+    const patientDetails: any = await prisma.patients.findMany({
+      where: { IsActive: true , DoctorId: token.DoctorId },
     });
-    const patientIds = patientDetails.map(item => item.Id);
-    const doctorActivities = await prisma.doctorActvities.findMany({
-      where: { IsDeleted: false },
-    });
+    for (let i = 0 ; i < patientDetails.length; i++)  {
+      patientDetails[i]["Visits"] = 0;
+      patientDetails[i]["Procedures"] = 0;
+    }
     logger(false, `Getting Patient Details : `, patientDetails);
     res.send({ status: true, data: patientDetails });
   } catch (err) {

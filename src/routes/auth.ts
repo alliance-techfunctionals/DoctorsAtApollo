@@ -40,6 +40,28 @@ router.post("/register", async (req: express.Request, res: express.Response) => 
     }
 });
 
+router.get("/getDetails" , async (req: express.Request, res: express.Response) => {
+    const tokenSecret : any = process.env.TOKEN_SECRET;
+    if (!req.body.mobile)  {
+      return res.send({ status : false, message: "Mobile is mustt get doctor details." });
+    }
+    let result, token;
+    try {
+      result = await prisma.doctors.findFirst({
+        where: { MobileNumber: req.body.mobile }});
+      if (result)  {
+       // Creating JSON Web Token
+       token = jwt.sign(result, tokenSecret, { expiresIn: "120d" });
+       logger(false, `Getting Doctor details By Mobile : `, result);
+       res.send({ status: true, data: { doctor: result, token: token } });
+      } else {
+        res.send({status: false, message: `Doctor not registered. Please register doctor first.`});
+      }
+      
+    } catch (err) {
+      res.send({status: false, message: "Get Doctor details operation failed due to" , data: err});
+    }
+});
   
 // router.post("/verifyOTP", async (req: express.Request, res: express.Response) => {
 //     const OTP = parseInt(req.body.otp); 
