@@ -33,6 +33,14 @@ router.get("/:id", async (req: express.Request, res: express.Response) => {
 
 router.post("/", async (req: express.Request, res: express.Response) => {
   try {
+    // Check first procedure already exist or not
+    const isProcedureExist = await prisma.procedures.findFirst({
+      where: { ProcedureName: req.body.ProcedureName , IsActive: true },
+    });
+
+    if (isProcedureExist)  {
+      return res.send({ status: false, message: `Procedure type ${req.body.ProcedureName} already exist.`});
+    }
     const result = await prisma.procedures.create({
       data: { ...req.body },
     });
