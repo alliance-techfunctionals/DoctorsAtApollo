@@ -31,10 +31,27 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 
 router.get("/:id", async (req: express.Request, res: express.Response) => {
   const patient_id = parseInt(req.params.id);
+  let doctorActivitiesHistory = await prisma.doctorActvities.findMany({
+    where: { PatientId: patient_id, IsDeleted: false }
+  });
+
+  let visits, procedures;
   try {
-    const patientDetail = await prisma.patients.findFirst({
+    const patientDetail : any = await prisma.patients.findFirst({
       where: { Id: patient_id, IsActive: true },
     });
+    
+    visits = doctorActivitiesHistory.filter((doctorActivity) => doctorActivity.ActivityTypeId == 0);
+    procedures = doctorActivitiesHistory.filter((doctorActivity) => doctorActivity.ActivityTypeId != 0);
+  
+    if (req.body.history == "visits") {
+      patientDetail["visits"] = visits;
+    } else if (req.body.history == "procedures")  {
+      patientDetail["procedures"] = procedures;
+    } else {
+      patientDetail["visits"] = visits;
+      patientDetail["procedures"] = procedures;
+    }
     logger(false, `Getting Patient Detail by Id : ${patient_id} `, patientDetail);
     res.send({ status: true, data: patientDetail });
   } catch (err) {
@@ -59,6 +76,7 @@ router.post("/", async (req: express.Request, res: express.Response) => {
 router.put("/:id", async (req: express.Request, res: express.Response) => {
   const patient_id = parseInt(req.params.id);
   try {
+    // check visits, procedures history by patient id
     const updated_patient_details = await prisma.patients.update({
       where: { Id: patient_id },
       data: { ...req.body, ModifiedOn: new Date },
