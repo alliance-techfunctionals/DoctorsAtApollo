@@ -31,13 +31,13 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 
 router.get("/:id", async (req: express.Request, res: express.Response) => {
   const patient_id = parseInt(req.params.id);
-  let doctorActivitiesHistory = await prisma.doctorActvities.findMany({
-    where: { PatientId: patient_id, IsDeleted: false }
-  });
   let visits, procedures;
   try {
     const patientDetail : any = await prisma.patients.findFirst({
       where: { Id: patient_id, IsActive: true },
+    });
+    let doctorActivitiesHistory = await prisma.doctorActvities.findMany({
+      where: { PatientId: patient_id, DoctorId: patientDetail.DoctorId , IsDeleted: false }
     });
     
     visits = doctorActivitiesHistory.filter((doctorActivity) => doctorActivity.ActivityTypeId == 0);

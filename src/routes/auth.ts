@@ -40,7 +40,7 @@ router.post("/register", async (req: express.Request, res: express.Response) => 
     }
 });
 
-router.get("/login" , async (req: express.Request, res: express.Response) => {
+router.post("/login" , async (req: express.Request, res: express.Response) => {
     const tokenSecret : any = process.env.TOKEN_SECRET;
     if (!req.body.mobile)  {
       return res.send({ status : false, message: "Mobile is mustt get doctor details." });
